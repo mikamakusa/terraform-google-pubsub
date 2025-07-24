@@ -1,76 +1,128 @@
 ## google_pubsub_lite_reservation
-output "google_pubsub_lite_reservation_name" {
-  value = try(google_pubsub_lite_reservation.this.*.name)
-}
-
-output "google_pubsub_lite_reservation_throughput_capacity" {
-  value = try(google_pubsub_lite_reservation.this.*.throughput_capacity)
+output "lite_reservation" {
+  value = {
+    for a in google_pubsub_lite_reservation.this : a => {
+      id                  = a.id
+      name                = a.name
+      throughput_capacity = a.throughput_capacity
+    }
+  }
 }
 
 ## google_pubsub_lite_subscription
-output "google_pubsub_lite_subscription_name" {
-  value = try(google_pubsub_lite_subscription.this.*.name)
-}
-
-output "google_pubsub_lite_subscription_topic" {
-  value = try(google_pubsub_lite_subscription.this.*.topic)
+output "lite_subscription" {
+  value = {
+    for a in google_pubsub_lite_subscription.this : a => {
+      id              = a.id
+      name            = a.name
+      topic           = a.topic
+      delivery_config = a.delivery_config
+      zone            = a.zone
+    }
+  }
 }
 
 ## google_pubsub_lite_topic
-output "google_pubsub_lite_topic_name" {
-  value = try(google_pubsub_lite_topic.this.*.name)
-}
-
-output "google_pubsub_lite_topic_reservation_config" {
-  value = try(google_pubsub_lite_topic.this.*.reservation_config)
-}
-
-output "google_pubsub_lite_topic_retention_config" {
-  value = try(google_pubsub_lite_topic.this.*.retention_config)
-}
-
-output "google_pubsub_lite_topic_partition_config" {
-  value = try(google_pubsub_lite_topic.this.*.partition_config)
+output "lite_topic" {
+  value = {
+    for a in google_pubsub_lite_topic.this : a => {
+      id                 = a.id
+      name               = a.name
+      partition_config   = a.partition_config
+      reservation_config = a.reservation_config
+      retention_config   = a.retention_config
+      zone               = a.zone
+    }
+  }
 }
 
 ## google_pubsub_schema
-output "google_pubsub_schema_name" {
-  value = try(google_pubsub_schema.this.*.name)
+output "schema" {
+  value = {
+    for a in google_pubsub_schema.this : a => {
+      id   = a.id
+      name = a.name
+    }
+  }
 }
 
 ## google_pubsub_schema_iam_binding
-output "google_pubsub_schema_iam_binding_id" {
-  value = try(google_pubsub_schema_iam_binding.this.*.id)
-}
-
-output "google_pubsub_schema_iam_binding_schema" {
-  value = try(google_pubsub_schema_iam_binding.this.*.schema)
+output "schema_iam_binding" {
+  value = {
+    for a in google_pubsub_schema_iam_binding.this : a => {
+      id        = a.id
+      role      = a.role
+      condition = a.condition
+      etag      = a.etag
+      schema    = a.schema
+    }
+  }
 }
 
 ## google_pubsub_subscription
-output "google_pubsub_subscription_name" {
-  value = try(google_pubsub_subscription.this.*.name)
-}
-
-output "google_pubsub_subscription_topic" {
-  value = try(google_pubsub_subscription.this.*.topic)
+output "subscription" {
+  value = {
+    for a in google_pubsub_subscription.this : a => {
+      id                           = a.id
+      name                         = a.name
+      topic                        = a.topic
+      push_config                  = a.push_config
+      cloud_storage_config         = a.cloud_storage_config
+      labels                       = a.labels
+      ack_deadline_seconds         = a.ack_deadline_seconds
+      bigquery_config              = a.bigquery_config
+      dead_letter_policy           = a.dead_letter_policy
+      effective_labels             = a.effective_labels
+      enable_exactly_once_delivery = a.enable_exactly_once_delivery
+      enable_message_ordering      = a.enable_message_ordering
+      expiration_policy            = a.expiration_policy
+      message_retention_duration   = a.message_retention_duration
+      retain_acked_messages        = a.retain_acked_messages
+      retry_policy                 = a.retry_policy
+    }
+  }
 }
 
 ## google_pubsub_subscription_iam_binding
-output "google_pubsub_subscription_iam_binding_id" {
-  value = try(google_pubsub_subscription_iam_binding.this.*.id)
+output "subscription_iam_binding" {
+  value = {
+    for a in google_pubsub_subscription_iam_binding.this : a => {
+      id        = a.id
+      condition = a.condition
+      role      = a.role
+      members   = a.members
+      etag      = a.etag
+    }
+  }
 }
 
 ## google_pubsub_topic
-output "google_pubsub_topic_name" {
-  value = try(google_pubsub_topic.this.*.name)
+output "topic" {
+  value = {
+    for a in google_pubsub_topic.this : a => {
+      id                             = a.id
+      name                           = a.name
+      ingestion_data_source_settings = a.ingestion_data_source_settings
+      message_retention_duration     = a.message_retention_duration
+      effective_labels               = a.effective_labels
+      labels                         = a.labels
+      kms_key_name                   = a.kms_key_name
+      message_storage_policy         = a.message_storage_policy
+      schema_settings                = a.schema_settings
+    }
+  }
 }
 
 ## google_pubsub_topic_iam_binding
-output "google_pubsub_topic_iam_binding_id" {
-  value = try(google_pubsub_topic_iam_binding.this.*.id)
-}
-
-output "google_pubsub_topic_iam_binding_topic" {
-  value = try(google_pubsub_topic_iam_binding.this.*.topic)
+output "topic_iam_binding" {
+  value = {
+    for a in google_pubsub_topic_iam_binding.this : a => {
+      id        = a.id
+      etag      = a.etag
+      members   = a.members
+      role      = a.role
+      condition = a.condition
+      topic     = a.topic
+    }
+  }
 }

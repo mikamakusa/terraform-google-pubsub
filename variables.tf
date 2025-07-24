@@ -1,39 +1,5 @@
-variable "bucket_name" {
-  type    = string
-  default = null
-}
-
-variable "account_id" {
-  type    = string
-  default = null
-}
-
-variable "lite_reservation" {
-  type = list(object({
-    id                  = any
-    name                = string
-    throughput_capacity = number
-  }))
-  default = []
-}
-
-variable "lite_subscription" {
-  type = list(object({
-    id       = any
-    name     = string
-    topic_id = any
-    region   = optional(string)
-    zone     = optional(string)
-    delivery_config = optional(list(object({
-      delivery_requirement = string
-    })))
-  }))
-  default = []
-}
-
 variable "lite_topic" {
   type = list(object({
-    id     = any
     name   = string
     region = optional(string)
     zone   = optional(string)
@@ -49,8 +15,23 @@ variable "lite_topic" {
     reservation_config = optional(list(object({
       throughput_reservation = optional(string)
     })), [])
+    subscription = optional(list(object({
+      name                 = string
+      region               = optional(string)
+      zone                 = optional(string)
+      delivery_requirement = string
+    })))
+    reservation = optional(list(object({
+      name                = string
+      throughput_capacity = number
+    })))
   }))
   default = []
+
+  validation {
+    condition     = alltrue([for a in var.lite_topic.*.subscription : true if a != null && contains(["DELIVER_IMMEDIATELY", "DELIVER_AFTER_STORED", "DELIVERY_REQUIREMENT_UNSPECIFIED"], a[0].delivery_requirement)])
+    error_message = "Valid values are : DELIVER_IMMEDIATELY, DELIVER_AFTER_STORED, DELIVERY_REQUIREMENT_UNSPECIFIED."
+  }
 }
 
 variable "schema" {
@@ -59,18 +40,17 @@ variable "schema" {
     name       = string
     type       = optional(string)
     definition = optional(string)
+    iam = optional(list(object({
+      members = list(string)
+      role    = string
+    })))
   }))
   default = []
-}
 
-variable "schema_iam_binding" {
-  type = list(object({
-    id        = any
-    members   = list(string)
-    role      = string
-    schema_id = any
-  }))
-  default = []
+  validation {
+    condition     = alltrue([for b in var.schema : true if b != null && contains(["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"], b.type)])
+    error_message = "Valid values are : TYPE_UNSPECIFIED, PROTOCOL_BUFFER, AVRO."
+  }
 }
 
 variable "subscription" {
@@ -100,6 +80,8 @@ variable "subscription" {
       max_duration             = optional(string)
       max_bytes                = optional(number)
       max_messages             = optional(number)
+      bucket                   = optional(string)
+      service_account_email    = optional(string)
       avro_config = optional(list(object({
         write_metadata   = optional(bool)
         use_topic_schema = optional(bool)
@@ -127,16 +109,10 @@ variable "subscription" {
       maximum_backoff = optional(string)
       minimum_backoff = optional(string)
     })), [])
-  }))
-  default = []
-}
-
-variable "subscription_iam_binding" {
-  type = list(object({
-    id              = any
-    members         = list(string)
-    role            = string
-    subscription_id = any
+    iam = optional(list(object({
+      members = list(string)
+      role    = string
+    })))
   }))
   default = []
 }
@@ -171,16 +147,10 @@ variable "topic" {
       schema   = string
       encoding = optional(string)
     })), [])
-  }))
-  default = []
-}
-
-variable "topic_iam_binding" {
-  type = list(object({
-    id       = any
-    members  = list(string)
-    role     = string
-    topic_id = any
+    iam = optional(list(object({
+      members = list(string)
+      role    = string
+    })))
   }))
   default = []
 }
